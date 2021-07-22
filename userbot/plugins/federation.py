@@ -101,11 +101,27 @@ async def _(event):
             await conv.get_response()
             await conv.send_message("/fedinfo " + lavde)
             massive = await conv.get_response()
-            await user.edit(massive.text + "\n\n**ʟɛɢɛռɖaʀʏ_ᴀғ_ɦɛʟʟɮօt**")
+            await user.edit(massive.text + "\n\n**Andencento ฅ^•ﻌ•^ฅ**")
         except YouBlockedUserError:
             await user.edit("`Please Unblock` @MissRose_Bot")
             
-            
+@Andencento.on(admin_cmd(pattern="myfeds ?(.*)"))
+@Andencento.on(sudo_cmd(pattern="myfeds ?(.*)", allow_sudo=True))
+async def myfeds(event):
+    user = await event.edit("`Wi8 Master, Collecting all your Feds...``")
+    async with bot.conversation(bot) as rose:
+        await rose.send_message("/start")
+        await rose.get_response()
+        await rose.send_message("/myfeds")
+        pro = await rose.get_response()
+        if "Looks like" in pro.text:
+            await pro.click(0)
+            await asyncio.sleep(1.5)
+            pro = await rose.get_response()
+            await bot.send_file(event.chat_id, pro, caption='**Collected by Andencento ฅ^•ﻌ•^ฅ**')
+        else:
+            await user.edit(pro.text + "\n\n**Collected by Andencento ฅ^•ﻌ•^ฅ**")
+    
 CmdHelp("federation").add_command(
   "newfed", "<newfed name>", "Makes a federation of Rose bot"
 ).add_command(
@@ -116,6 +132,10 @@ CmdHelp("federation").add_command(
   "fedinfo", "<fed id>", "Gives details of the given fed id"
 ).add_info(
   "Rose Bot Federation."
+).add_command(
+  "myfeds", "Give you info of your Feds"
+).add_info(
+  "Check all your Feds."
 ).add_warning(
   "✅ Harmless Module."
 ).add()

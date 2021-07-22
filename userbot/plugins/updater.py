@@ -15,12 +15,12 @@ HEROKU_API_KEY = Config.HEROKU_API_KEY or None
 Heroku = heroku3.from_key(Config.HEROKU_API_KEY)
 heroku_api = "https://api.heroku.com"
 
-UPSTREAM_REPO_BRANCH = "master"
+UPSTREAM_REPO_BRANCH = "ANdencento"
 
-UPSTREAM_REPO_URL = "https://github.com/Noob-Stranger/andencentopack"
+UPSTREAM_REPO_URL = "https://github.com/Andencento/Deploy-Andencento"
 
 REPO_REMOTE_NAME = "temponame"
-IFFUCI_ACTIVE_BRANCH_NAME = "master"
+IFFUCI_ACTIVE_BRANCH_NAME = "ANdencento"
 NO_HEROKU_APP_CFGD = "No Heroku App Found!"
 HEROKU_GIT_REF_SPEC = "HEAD:refs/heads/master"
 RESTARTING_APP = "Restarting Heroku App..."
@@ -92,84 +92,11 @@ async def update(event, repo, ups_rem, ac_br):
         repo.git.reset("--hard", "FETCH_HEAD")
     await update_requirements()
     await event.edit(
-        "✅ Successfully updated ᴀɴᴅᴇɴᴄᴇɴᴛᴏ!\n\nBot is restarting please wait for a minute."
+        "✅ Successfully updated Aɴᴅᴇɴᴄᴇɴᴛᴏ!\n\nBot is restarting please wait for a minute."
     )
     args = [sys.executable, "-m", "userbot"]
     os.execle(sys.executable, *args, os.environ)
     return
-
-
-@Andencento.on(admin_cmd(outgoing=True, pattern=r"update(| now)$"))
-@Andencento.on(sudo_cmd(pattern="update(| now)$", allow_sudo=True))
-async def upstream(event):
-    conf = event.pattern_match.group(1).strip()
-    event = await edit_or_reply(event, "`Checking for new updates...`")
-    off_repo = UPSTREAM_REPO_URL
-    force_update = False
-    if HEROKU_API_KEY is None or HEROKU_APP_NAME is None:
-        return await edit_or_reply(
-            event, "Set  `HEROKU_APP_NAME`  and  `HEROKU_API_KEY`  to update your bot 🥴"
-        )
-    try:
-        txt = "😕 `Updater cannot continue due to some problems occured`\n\n**LOGTRACE:**\n"
-        repo = Repo()
-    except NoSuchPathError as error:
-        await event.edit(f"{txt}\n`directory {error}  not found`")
-        return repo.__del__()
-    except GitCommandError as error:
-        await event.edit(f"{txt}\n`Early failure! {error}`")
-        return repo.__del__()
-    except InvalidGitRepositoryError as error:
-        if conf is None:
-            return await event.edit(
-                f"`The directory {error} "
-                "does not seem to be a git repository.\n"
-                "Fix that by force updating! Using "
-                f"`{hl}update now.`"
-            )
-        repo = Repo.init()
-        origin = repo.create_remote("upstream", off_repo)
-        origin.fetch()
-        force_update = True
-        repo.create_head("master", origin.refs.master)
-        repo.heads.master.set_tracking_branch(origin.refs.master)
-        repo.heads.master.checkout(True)
-    ac_br = repo.active_branch.name
-    if ac_br != UPSTREAM_REPO_BRANCH:
-        await event.edit(
-            f"`Looks like you are using your own custom git branch ( {ac_br} ). "
-            "Please checkout to official branch that is ( master )`"
-        )
-        return repo.__del__()
-    try:
-        repo.create_remote("upstream", off_repo)
-    except BaseException:
-        pass
-    ups_rem = repo.remote("upstream")
-    ups_rem.fetch(ac_br)
-    changelog = await gen_chlog(repo, f"HEAD..upstream/{ac_br}")
-    if changelog == "" and not force_update:
-        await event.edit(
-            "\n**😎 ᴀɴᴅᴇɴᴄᴇɴᴛᴏ is UP-TO-DATE.**"
-            f"\n\n**Version :**  {user_ver}"
-            f"\n**Owner :**  {user_mention}"
-            f"\n**Git Branch :**  {UPSTREAM_REPO_BRANCH}\n"
-        )
-        return repo.__del__()
-    if conf == "" and not force_update:
-        await print_changelogs(event, ac_br, changelog)
-        await event.delete()
-        return await event.respond(f"🌚 Do `{hl}update build` to update your **ᴀɴᴅᴇɴᴄᴇɴᴛᴏ** !!")
-
-    if force_update:
-        await event.edit(
-            "`Force-Updating ᴀɴᴅᴇɴᴄᴇɴᴛᴏ. Please wait...`"
-        )
-    if conf == "now":
-        await event.edit("`Update In Progress! Please Wait....`")
-        await update(event, repo, ups_rem, ac_br)
-    return
-
 
 async def deploy(event, repo, ups_rem, ac_br, txt):
     if HEROKU_API_KEY is not None:
@@ -222,11 +149,12 @@ async def deploy(event, repo, ups_rem, ac_br, txt):
     return
 
 
+
 @Andencento.on(admin_cmd(outgoing=True, pattern=r"update build$"))
 @Andencento.on(sudo_cmd(pattern="update build$", allow_sudo=True))
 async def upstream(event):
     event = await edit_or_reply(event, "`Hard-Update In Progress... \nPlease wait until docker build is finished...`")
-    off_repo = "https://github.com/Noob-Stranger/andencentopack"
+    off_repo = "https://github.com/Andencento/Deploy-Andencento"
     os.chdir("/app")
     git_user = f"rm -rf .git"
     try:
@@ -246,9 +174,9 @@ async def upstream(event):
         repo = Repo.init()
         origin = repo.create_remote("upstream", off_repo)
         origin.fetch()
-        repo.create_head("master", origin.refs.master)
-        repo.heads.master.set_tracking_branch(origin.refs.master)
-        repo.heads.master.checkout(True)
+        repo.create_head("ANdencento", origin.refs.ANdencento)
+        repo.heads.ANdencento.set_tracking_branch(origin.refs.ANdencento)
+        repo.heads.ANdencento.checkout(True)
     try:
         repo.create_remote("upstream", off_repo)
     except BaseException:
@@ -256,18 +184,18 @@ async def upstream(event):
     ac_br = repo.active_branch.name
     ups_rem = repo.remote("upstream")
     ups_rem.fetch(ac_br)
-    await event.edit(f"**ᴀɴᴅᴇɴᴄᴇɴᴛᴏ Docker Build In Progress... Type** `{hl}ping`  **after 5 mins to check if Bot is working!**")
+    await event.edit(f"**Aɴᴅᴇɴᴄᴇɴᴛᴏ Docker Build In Progress... Type** `{hl}ping`  **after 5 mins to check if Bot is working!**")
     await deploy(event, repo, ups_rem, ac_br, txt)
 
 
 CmdHelp("update").add_command(
   "update", None, "Checks if any new update is available."
 ).add_command(
-  "update now", None, "Soft-Update Your ᴀɴᴅᴇɴᴄᴇɴᴛᴏ. Basically if you restart dyno it will go back to previous deploy."
+  "update now", None, "Soft-Update Your Aɴᴅᴇɴᴄᴇɴᴛᴏ. Basically if you restart dyno it will go back to previous deploy."
 ).add_command(
-  "update build", None, "Hard-Update Your ᴀɴᴅᴇɴᴄᴇɴᴛᴏ. This won't take you back to your previous deploy. This will be triggered even if there is no changelog."
+  "update build", None, "Hard-Update Your Aɴᴅᴇɴᴄᴇɴᴛᴏ. This won't take you back to your previous deploy. This will be triggered even if there is no changelog."
 ).add_info(
-  "ᴀɴᴅᴇɴᴄᴇɴᴛᴏ Updater."
+  "Aɴᴅᴇɴᴄᴇɴᴛᴏ Updater."
 ).add_warning(
   "✅ Harmless Module."
 ).add()

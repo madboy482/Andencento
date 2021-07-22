@@ -1,0 +1,5 @@
+build: 
+  docker:
+      ANDENCENTO: Dockerfile
+run:
+   ANDENCENTO: bash resource/startup/startup.sh
